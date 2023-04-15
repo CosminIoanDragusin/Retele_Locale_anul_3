@@ -1,0 +1,54 @@
+void ReceiveThread() {
+		int ByteReceived;
+		char buff[1024];
+
+               while(1) {
+			  NewConnection = SOCKET_ERROR; 
+			  while(NewConnection == SOCKET_ERROR)
+			  {
+				  NewConnection = accept(ListeningSocket, NULL, NULL);
+                                  button1->BackColor = System::Drawing::Color::Green;
+			  }
+	
+			  break;
+		         }
+
+              while(true) {
+		   ByteReceived = recv(NewConnection, buff, sizeof(buff), 0);
+
+		   if(ByteReceived > 0) 
+                           {
+				PrintStringDel^ print = gcnew PrintStringDel(this,&Form1::PrintString);
+				String^ text = gcnew String(buff);
+				textBox1->BeginInvoke(print, text);
+		           }
+		          }
+	              }
+
+
+
+ // Listen for client connections. We used a backlog of 5, which
+     // is normal for many applications.
+     if (listen(ListeningSocket, 5) == SOCKET_ERROR)
+     {
+		 textBox1->Text += String::Format("Server: listen(): Error listening on socket  {0}", WSAGetLastError());
+          // Close the socket
+          closesocket(ListeningSocket);
+          // Do the clean up
+          WSACleanup();
+     }
+     else
+          textBox1->Text += "Server: listen() is OK, I'm waiting for connections..."  + Environment::NewLine;
+
+		Threading::ThreadStart^ ts = gcnew Threading::ThreadStart(this,
+										   &Form1::ReceiveThread);
+
+		Threading::Thread^ t = gcnew Threading::Thread(ts);
+		t->Start();
+	}
+
+void SendText(String^ str) {
+		char buff[1024];
+		strcpy(buff, (char*)(void*)Marshal::StringToHGlobalAnsi(str));
+		int BytesSent = send(NewConnection, buff, strlen(buff) + 1, 0);
+	}

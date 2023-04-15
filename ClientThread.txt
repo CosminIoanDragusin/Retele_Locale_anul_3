@@ -1,0 +1,39 @@
+void ReceiveThread() {
+		 int ByteReceived;
+		char buff[1024];
+
+		while(true) {
+		   ByteReceived = recv(SendingSocket, buff, sizeof(buff), 0);
+
+		   if(ByteReceived > 0) {
+				PrintStringDel^ print = gcnew PrintStringDel(this,&Form1::PrintString);
+				String^ text = gcnew String(buff);
+				textBox1->BeginInvoke(print, text);
+		   }
+		}
+	}
+
+
+
+         int  RetCode;
+		 RetCode = connect(SendingSocket, (SOCKADDR *) &ServerAddr, sizeof(ServerAddr));
+		  if(RetCode != 0)
+		 {
+			 textBox1->Text += "Client: connect() failed!" + Environment::NewLine;
+			  // Close the socket
+			  closesocket(SendingSocket);
+			  // Do the clean up
+			  WSACleanup();
+		 }
+		 else textBox1->Text += "Client connected";
+
+		Threading::ThreadStart^ ts = gcnew Threading::ThreadStart(this,&Form1::ReceiveThread);
+		Threading::Thread^ t = gcnew Threading::Thread(ts);
+		t->Start();
+	}
+
+	void SendText(String^ str) {
+		char buff[1024];
+		strcpy(buff, (char*)(void*)Marshal::StringToHGlobalAnsi(str));
+		int BytesSent = send(SendingSocket, buff, strlen(buff) + 1, 0);
+	}

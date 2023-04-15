@@ -1,0 +1,76 @@
+
+Solutia caseta text IP si Port in VS2005
+
+#include<vcclr.h>
+ // Set up a SOCKADDR_IN structure that will be used to connect
+// to a listening server on port 5150. For demonstration
+// purposes, let's assume our server's IP address is 127.0.0.1 or localhost
+			 
+// IPv4
+ServerAddr.sin_family = AF_INET;
+// Port no.
+
+ Port = Convert::ToInt32(portBox->Text);
+ServerAddr.sin_port = htons(Port);
+// The IP address
+System::String ^orig = this->textBox1->Text;
+pin_ptr<const wchar_t> wch = PtrToStringChars(orig);
+
+size_t origsize = wcslen(wch) + 1;
+const size_t newsize = 100;
+size_t convertedChars = 0;
+char nstring[newsize];
+wcstombs_s(&convertedChars, nstring, origsize, wch, _TRUNCATE);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+in vs 2008
+
+#include<vcclr.h>
+#include <msclr/marshal.h>
+
+using namespace msclr::interop;
+
+// The IP address
+
+		marshal_context ^ context = gcnew marshal_context();
+		const char * ip = context->marshal_as<const char*>(ipBox->Text);
+
+		ServerAddr.sin_addr.s_addr = inet_addr(ip);
+
+
+
+in vs 2005
+
+#include<vcclr.h>
+
+System::String ^orig = this->textBox1->Text;
+pin_ptr<const wchar_t> wch = PtrToStringChars(orig);
+
+size_t origsize = wcslen(wch) + 1;
+const size_t newsize = 100;
+size_t convertedChars = 0;
+char nstring[newsize];
+wcstombs_s(&convertedChars, nstring, origsize, wch, _TRUNCATE);
+
+
+Where nstring should be where the string ends up.
+
+
+
+
+
+
+
+
